@@ -1,5 +1,6 @@
 ---
 title: "In-class-template"
-format: html
+author: "Macey Hartmann"
+format: pdf
 ---
 
