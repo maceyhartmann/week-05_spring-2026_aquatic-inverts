@@ -354,7 +354,9 @@ ggplot(data = sal_abund_df,
         strip.text = element_text(size = 7))
 ```
 
+## d. Interpret your figure
 
+Copepods and ostracods show the broadest range of abundances and are present across the full salinity gradient (0–75 ppt), with their highest abundances concentrated at low salinities (below ~10 ppt) but with some observations persisting at 40–75 ppt, suggesting relatively high salinity tolerance compared to other taxa. Annelida Oligochaete is consistently near-zero in abundance across all salinities, with only a few low-abundance observations clustered at low salinities, implying it is rare in this system regardless of salinity. Annelida Polychaete and Nematodes have the smallest overall abundance, with almost all observations clustered near zero across all salinity levels, suggesting they are essentially absent from the samples at NCOS sites.
 
 
 
