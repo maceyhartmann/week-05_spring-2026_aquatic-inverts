@@ -41,6 +41,6 @@ The rendered key for the code in this repository is [here](https://github.com/ma
 
 The rendered document from class is [here](https://github.com/maceyhartmann/week-05_spring-2026_aquatic-inverts/blob/main/code/In-class-template.pdf).
 
-The rendered individual assignment is [here]()
+The rendered individual assignment is [here](https://github.com/maceyhartmann/week-05_spring-2026_aquatic-inverts/blob/main/code/Individual-Assignment-05.pdf)
 
 
