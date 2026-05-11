@@ -324,7 +324,35 @@ sal_abund_df <- aq_ins_clean |>
 slice_sample(sal_abund_df, n = 10)
 ```
 
-## C. 
+## c. Code your figure
+
+```{r}
+#| label: salinity-abundance-figure
+# base layer
+ggplot(data = sal_abund_df,
+       # x-axis: median salinity
+       # y-axis: log + 1 transformed average abundance
+       # color: taxon
+       mapping = aes(x = med_sal,
+                     y = log_ave_lit,
+                     color = taxon)) +
+  # point layer for each observation
+  geom_point(alpha = 0.7,
+             size = 1.5) +
+  # separate panel for each taxon with free scales on both axes
+  facet_wrap(~ taxon,
+             scales = "free") +
+  # readable axis labels
+  labs(x = "Median salinity (ppt)",
+       y = "log + 1 transformed average abundance/L") +
+  # non-default color palette
+  scale_color_brewer(palette = "Paired") +
+  # remove legend 
+  theme_bw() +
+  theme(legend.position = "none",
+        # improve readability of facet strip text
+        strip.text = element_text(size = 7))
+```
 
 
 
