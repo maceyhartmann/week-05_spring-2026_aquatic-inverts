@@ -265,7 +265,7 @@ ostracods <- ggplot(data = ostracods_df,
   stat_summary(geom = "point",
                fun = "median",
                size = 4,
-               color = "red",
+               color = "darkgreen",
                shape = 17) +
   # wrapping x-axis text
   scale_x_discrete(labels = label_wrap(15)) +
@@ -289,5 +289,11 @@ ostracods
 # combining salinity, copepods, and ostracods (bottom right) using patchwork
 salinity / (copepods | ostracods)
 ```
+
+## e. Interpret your figure
+
+Copepod median abundance is highest at South of Venoco Bridge with a little over 3 log-units. However the Main Channel and North of Phelps Bridge have medians near 0 log-units. Ostracod median abundance is highest at South of Phelps Bridge with a little over 2 log-units and second highest at Deveraux Creek with 2 log-units. However, most other sites showing medians near 0 log-units. 
+
+Sites with the highest median salinity such as North and South of Venoco Bridge have ostracod medians near 0, suggesting ostracods are not best suited for high-salinity conditions. The highest ostracod medians occur at South of Phelps Bridge and Devereux Creek, which have lower median salinities (~5 and ~1 ppt), demonstrating a possible preference for water with lower salinity. 
 
 
