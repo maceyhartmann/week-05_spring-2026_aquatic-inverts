@@ -2,7 +2,13 @@
 title: "Individual-Assignment-5"
 author: "Macey Hartmann"
 date: "2026-05-10"
-format: pdf
+format: 
+  pdf:
+    include-in-header: 
+       text: |
+         \usepackage{fvextra}
+         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+         \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
 execute:
   message: false
   warning: false
@@ -217,10 +223,10 @@ copepods <- ggplot(data = copepods_df,
 
 ## a. Plan your figure
 
-- x-axis: `site_full`   
-- y-axis: `log_ave_lit`  
-- geometry to represent average abundance/L: `geom_jitter()` 
-- geometry to represent medians: `stat_summary()` 
+- x-axis: `site_full`
+- y-axis: `log_ave_lit`
+- geometry to represent average abundance/L: `geom_jitter()`
+- geometry to represent medians: `stat_summary()`
 
 ## b. Wrangle your data
 
@@ -235,6 +241,41 @@ ostracods_df <- aq_ins_clean |>
 
 # display 10 random rows to check output
 slice_sample(ostracods_df, n = 10)
+```
+
+## c. Code your figure
+
+```{r}
+#| label: ostracod-figure
+
+# base layer
+ostracods <- ggplot(data = ostracods_df,
+                    # x-axis: site
+                    # y-axis: log + 1 transformed average abundance/L
+                    mapping = aes(x = site_full,
+                                  y = log_ave_lit)) +
+  # first layer: individual average abundance/L measurements
+  geom_jitter(height = 0,
+              width = 0.1,
+              shape = 21) +
+  # second layer: large filled orange triangle for median — distinct color,
+  # shape, and size from individual points
+  stat_summary(geom = "point",
+               fun = "median",
+               size = 4,
+               color = "red",
+               shape = 17) +
+  # wrapping x-axis text
+  scale_x_discrete(labels = label_wrap(15)) +
+  # axis labels and title indicating taxonomic group
+  labs(x = "Site",
+       y = "log + 1 transformed average abundance/L",
+       title = "Ostracods") +
+  # non-default theme
+  theme_bw()
+
+# displaying object
+ostracods
 ```
 
 
