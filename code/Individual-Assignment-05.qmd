@@ -247,6 +247,8 @@ slice_sample(ostracods_df, n = 10)
 
 ```{r}
 #| label: ostracod-figure
+#| fig-width: 8
+#| fig-height: 6
 
 # base layer
 ostracods <- ggplot(data = ostracods_df,
