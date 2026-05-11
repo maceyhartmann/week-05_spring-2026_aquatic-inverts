@@ -4,3 +4,188 @@ author: "Macey Hartmann"
 format: pdf
 ---
 
+# 1. Set Up 
+
+## Packages 
+
+```{r}
+#| label: packages
+
+# general use and cleaning 
+library(tidyverse)
+library(here)
+library(janitor)
+library(snakecase)
+
+# wrap axis labels 
+library(scales)
+
+# reading .xlsx files 
+library(readxl)
+
+# visualize missing data 
+library(naniar)
+
+# arrange plots 
+library(patchwork)
+
+```
+
+## Data
+
+```{r}
+#| label: data
+
+# taxonomic information
+taxon_list <- read_csv(here("data", "taxon_list.csv"))
+
+# aquatic invertebrates
+aq_ins <- read_xlsx(
+  here("data", "Aquatic Sampling Data-2026-03-10.xlsx"), 
+  sheet = "Aquatic Insects"
+)
+
+# site information
+sites <- read_xlsx(
+  here("data", "Aquatic Sampling Data-2026-03-10.xlsx"),
+  sheet = "sites"
+)
+
+# water quality 
+water_quality <- read_xlsx(
+  here("data", "Aquatic Sampling Data-2026-03-10.xlsx"),
+  sheet = "Water Quality", 
+  na = c("", "n/a", "N/A", "over", "173+")
+)
+
+```
+
+# 2. Cleaning
+
+## 'sites' object
+
+Goal: create a new object from "sites" that only inlcudes NCOS sites
+
+```{r}
+
+# creating new object from sites
+ncos_sites <- sites |> 
+  # filtering to only includes NCOS quarterly sampling sites
+  filter(sector == "NCOS" & sampling_frequency == "Quarterly")
+
+```
+
+
+
+## clean 'taxon_list'
+
+Goal: convert character strings in the existing 'taxon_list' data frame into snakecase
+
+```{r}
+
+# creating new object from taxon_list 
+taxon_list_clean <- taxon_list |>
+  # converted taxon names to snake case 
+  mutate(verbatim_name = to_any_case(verbatim_name, 
+                                     case = "snake"))
+```
+
+## clean 'water_quality'
+
+Goal: create a data frame with mean pH, mean DO (mg/L), mean salinity (ppt) for each date and site 
+
+- create a new object from 'water_quality' 
+- clean column names 
+- only include surveys from quarterly NCOS sites 
+- create a new column called date_site to join with later data frames 
+- group by date_site 
+- calculate median pH, salinity, and dissolved oxygen 
+- ungroup data frame 
+- filter out any outliers 
+
+```{r}
+
+# creating new object from water quality
+water_quality_clean <- water_quality |> 
+  # cleaning column names
+  clean_names() |> 
+  # filtering join: only include sites in ncos_sites 
+  semi_join(ncos_sites, by = "site") |> 
+  # creating new 
+  unite("date_site", date, site, remove = TRUE) |> 
+  group_by(date_site) |> 
+  summarize(med_ph = median(p_h, na.rm = TRUE),
+            med_sal = median(salinity_ppt, na.rm = TRUE), 
+            med_do = median(dissolved_oxygen_mg_l, na.rm = TRUE)) |> 
+  ungroup() |> 
+  # filtering out salinity outliers 
+  filter(date_site != "2022-08-12_NVBR")
+
+
+```
+
+## clean 'aq_ins'
+
+Goal: create a long format data frame in which each row contains the counted individuals in each taxon during each survey. The data frame should include taxonomic information for each organism and the water quality information for each survey
+
+- create a new object from 'aq_ins'
+- clean column names 
+- filter to only include quarterly NCOS sites 
+- select columns 
+- filter to only include "filtered beaker" sample 
+- convert the data frame to long format 
+- group by site, date, and taxon 
+- calculate average abundance per liter (sum counts divided by 7.5 liters)
+- create a new column called 'date_site' to join with water quality
+- join data frames 
+- join with taxon list 
+
+```{r}
+
+aq_ins_clean <- aq_ins |> 
+  clean_names() |> 
+  semi_join(ncos_sites, by = "site") |> 
+  rename(date = date_on_vial) |> 
+  select(date, sample_type, site, 
+         ostracod, 
+         copepod,
+         hemiptera_corixidae_boatman, 
+         cladocera, 
+         nematode, 
+         diptera_ceratopogonidae, 
+         annelida_oligochaete,
+         diptera_chironomid, 
+         annelida_polychaete) |> 
+  filter(sample_type %in% c("FB250", "FB 250")) |> 
+  pivot_longer( 
+    # columns to make longer
+    cols = ostracod:annelida_polychaete, 
+    # new column for the old column names
+    names_to = "taxon",
+    # new column for the values in each of the old columns 
+    values_to = "abundance"
+    ) |> 
+  group_by(date, site, taxon) |> 
+  summarize(ave_lit = sum(abundance, na.rm = TRUE)/7.5) |> 
+  ungroup() |> 
+  unite("date_site", date, site, remove = FALSE) |> 
+  left_join(water_quality_clean, by = "date_site") |> 
+  left_join(taxon_list_clean, by = c("taxon" = "verbatim_name")) |> 
+  mutate(site_full = case_when(
+    site == "NVBR" ~ "North of Venoco Bridge",
+    site == "NEC" ~ "South of Venoco Bridge",
+    site == "NMC" ~ "Main Channel",
+    site == "NPB" ~ "South of Phelps Bridge",
+    site == "NPB1" ~ "North of Phelps Bridge",
+    site == "NPB2" ~ "Phelps Road",
+    site == "NWP" ~  "West Pond",
+    site == "NDC" ~ "Devereux Creek" 
+  ))
+  
+```
+
+
+
+
+
+

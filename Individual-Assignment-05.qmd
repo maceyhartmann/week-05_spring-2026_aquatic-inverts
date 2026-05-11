@@ -1,0 +1,43 @@
+---
+title: "Individual-Assignment-5"
+author: "Macey Hartmann"
+date: "2026-05-10"
+format: pdf
+execute:
+  message: false
+  warning: false
+---
+
+# 1. Set up
+
+## Packages
+
+```{r}
+#| label: packages
+
+# general use and cleaning
+library(tidyverse)
+library(here)
+library(janitor)
+library(snakecase)
+
+# wrapping axis labels
+library(scales)
+
+# reading in .xlsx files
+library(readxl)
+
+# visualizing missing data
+library(naniar)
+
+# arranging plots
+library(patchwork)
+```
+
+
+
+
+
+
+
+
