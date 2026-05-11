@@ -296,4 +296,37 @@ Copepod median abundance is highest at South of Venoco Bridge with a little over
 
 Sites with the highest median salinity such as North and South of Venoco Bridge have ostracod medians near 0, suggesting ostracods are not best suited for high-salinity conditions. The highest ostracod medians occur at South of Phelps Bridge and Devereux Creek, which have lower median salinities (~5 and ~1 ppt), demonstrating a possible preference for water with lower salinity. 
 
+# 2. Visualizing total abundance as a function of salinity
+
+## a. Plan your figure
+
+- x-axis: `med_sal`
+- y-axis: `log_ave_lit`
+- color: `taxon`
+- geometry: `geom_point()`
+- facets: `facet_wrap(~ taxon, scales = "free")`
+
+## b. Wrangle your data 
+
+```{r salinity-abundance-wrangling}
+# creating new object for abundance vs. salinity visualization
+sal_abund_df <- aq_ins_clean |>
+  # log + 1 transform mean abundance per liter
+  mutate(log_ave_lit = log(ave_lit + 1)) |>
+  # convert taxon names to title case for readable facet labels
+  mutate(taxon = str_to_title(str_replace_all(taxon, "_", " "))) |>
+  # reorder taxon factor levels by maximum abundance (descending)
+  mutate(taxon = fct_reorder(taxon, ave_lit, .fun = "max", .desc = TRUE)) |>
+  # keep only columns needed for the plot
+  select(taxon, med_sal, log_ave_lit, ave_lit)
+
+# display 10 random rows to check output
+slice_sample(sal_abund_df, n = 10)
+```
+
+## C. 
+
+
+
+
 
