@@ -280,5 +280,14 @@ ostracods <- ggplot(data = ostracods_df,
 ostracods
 ```
 
+## d. Create a multipanel figure 
+
+```{r}
+#| label: multipanel-ostracod
+#| fig-width: 14
+#| fig-height: 10
+# combining salinity, copepods, and ostracods (bottom right) using patchwork
+salinity / (copepods | ostracods)
+```
 
 
